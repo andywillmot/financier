@@ -10,3 +10,16 @@ services:
       - 8000:8000
     env_file:
       - ./.env.dev
+    depends_on:
+      - db
+  db:
+    image: postgres:12.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=financier
+      - POSTGRES_PASSWORD=finpass99
+      - POSTGRES_DB=financierdb
+
+volumes:
+  postgres_data:
