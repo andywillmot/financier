@@ -1,0 +1,1 @@
+tail transactions.csv | awk -v FPAT='([^,]+)|(\"[^\"]+\")' '{print "curl --data \"account="$4"&date="$1"&order="$2"&title="gsub("\"","",$5);$5"\" http://localhost:8000/transactions' | sh
