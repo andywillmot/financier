@@ -15,7 +15,7 @@ Including another URLconf
 """
 import pdb
 from django.contrib import admin
-from django.urls import path 
+from django.urls import path
 from django.conf.urls import url, include
 
 from financier.models import Transaction, SubCategory
@@ -24,27 +24,31 @@ from financier.utilities import map_category
 
 # Serializers define the API representation.
 
+
 class SubCategorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = SubCategory
         fields = ['name']
 
+
 class SubCategoryViewSet(viewsets.ModelViewSet):
     queryset = SubCategory.objects.all()
     serializer_class = SubCategorySerializer
+
 
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ['account','date','order','title','ttype','value','subcategory']
+        fields = ['account', 'date', 'order', 'title', 'ttype', 'value', 'subcategory']
         read_only_fields = ['subcategory']
+
 
 # ViewSets define the view behavior.
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
-    
+
     def perform_create(self, serializers):
         subcategory = None
 
@@ -66,4 +70,3 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls')),
 ]
-

@@ -7,25 +7,29 @@ from . import utilities
 
 def categorise_transaction(modeladmin, request, queryset):
     for q in queryset:
-        q.subcategory = utilities.map_category(q.title,q.value,q.ttype)
+        q.subcategory = utilities.map_category(q.title, q.value, q.ttype)
         q.save()
-    
+
 
 class TitleToSubCategoryMapResource(resources.ModelResource):
     class Meta:
         model = models.TitleToSubCategoryMap
 
+
 class TransactionResource(resources.ModelResource):
     class Meta:
         model = models.Transaction
+
 
 class CategoryResource(resources.ModelResource):
     class Meta:
         model = models.Category
 
+
 class SubCategoryResource(resources.ModelResource):
     class Meta:
         model = models.SubCategory
+
 
 # Register your models here.
 class TransactionAdmin(ImportExportModelAdmin):
@@ -41,7 +45,6 @@ class TransactionAdmin(ImportExportModelAdmin):
         'month',
         'year',
         'title',
-#        'category',
         'subcategory',
         'ttype',
         'value',
@@ -57,7 +60,6 @@ class TransactionAdmin(ImportExportModelAdmin):
         'month',
         'year',
         'title',
-#        'category',
         'subcategory',
         'ttype',
         'value',
@@ -99,10 +101,18 @@ class TitleToSubCategoryMapAdmin(ImportExportModelAdmin):
         'type_restriction',
     )
 
+
 def _register(model, admin_class):
     admin.site.register(model, admin_class)
 
+
 _register(models.Transaction, TransactionAdmin)
+
+
 _register(models.Category, CategoryAdmin)
+
+
 _register(models.SubCategory, SubCategoryAdmin)
+
+
 _register(models.TitleToSubCategoryMap, TitleToSubCategoryMapAdmin)
