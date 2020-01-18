@@ -13,7 +13,7 @@
     cp .env.prod.db.default .env.prod.db && nano .env.prod.db
     cp .env.dev.default .env.dev && nano .env.dev
 ```
-3. Build and run from compose file
+3. Build and run from compose file.  This is for the prod environment.  The docker-compose.yml builds a dev environment with DEBUG on, a clean DB each build and without the nginx proxy for static files.
 ```bash
     docker-compose -f docker-compose.prod.yml up -d --build
 ```
