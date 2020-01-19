@@ -40,4 +40,11 @@
     For admin login: `http://your-docker-host-ip-address:1337/admin`
 ```
 
+<h2>Using Financier</h2>
+
+<h3>API Auth Tokens</h3>
+1. Get a auth token by calling this.  The <user> can be the user you setup in createsuperuser step above:
+```bash
+docker-compose -f docker-compose.prod.yml exec web python manage.py drf_create_token <user>
+```
 

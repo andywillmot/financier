@@ -1,5 +1,7 @@
 BEGIN {
     FPAT="([^,]*)|(\"([^\"]|(\"\"))*\")";
+    AuthToken="<an auth token>";
+    HostName="<ip address or hostname including protocol:\\ and :port>";
 }
 
 {
@@ -17,5 +19,5 @@ BEGIN {
 
     json = "{\"date\": " date ", \"order\": " order ", \"ttype\": " ttype ", \"account\": " account ", \"title\": " title ", \"value\": " value "}";
 
-    print("curl -H \"Content-Type: application/json\" -H \"Authorization: Token 0139ec908690345e0d7ae34417b2a4fd54b767b9\" --request POST --data \x27" json "\x27 http://localhost:8000/transactions/ && echo \"\"");
+    print("curl -H \"Content-Type: application/json\" -H \"Authorization: Token " AuthToken "\" --request POST --data \x27" json "\x27 " HostName "/transactions/ && echo \"\"");
 }
