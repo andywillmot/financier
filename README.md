@@ -28,16 +28,16 @@
 ```
 6. Setup database
 ```bash
-    docker-compose exec docker-compose.prod.yml python manage.py migrate
+    docker-compose -f docker-compose.prod.yml exec web python manage.py migrate
 ```
 7. Create admin user
 ```bash
-    docker-compose exec docker-compose.prod.yml python manage.py createsuperuser
+    docker-compose -f docker-compose.prod.yml exec web python manage.py createsuperuser
 ```
 8. Test
 ```bash
-    For api testing: `http://localhost:8000`
-    For admin login: `http://localhost:8000/admin`
+    For api testing: `http://your-docker-host-ip-address:1337`
+    For admin login: `http://your-docker-host-ip-address:1337/admin`
 ```
 
 
