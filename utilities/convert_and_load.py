@@ -2,7 +2,11 @@
 
 import sys, getopt
 from pathlib import Path
+from lbg_convert import LBGConvert
 
+SELECTOR = {
+    "LBG": LBGConvert
+}
 
 def print_help_and_exit():
     print ('import_file.py -f <format> -i <inputfile>')
@@ -51,15 +55,24 @@ def test_parameters(argv):
 def main(argv):
     fileformat, inputfile = test_parameters(argv)
     # get file config
-    
-        
+
+    #validate format
+    if fileformat not in SELECTOR:
+        print("Conversion type", fileformat,"not found")
+        exit(1)
+
     # open file
     plfile = Path(inputfile)
     if plfile.exists():
         with plfile.open(mode='r') as f:
             l = f.readline()
-            print(l)
-
+            while(l != ""):
+                line_convertor = SELECTOR[fileformat.upper()](l)
+                if line_convertor.decompose():
+                    print(line_convertor.to_json())
+#                else:
+#                    print("Error in line!\n")
+                l = f.readline()
     else:
         print("Error: File", inputfile, "does not exist.")
 

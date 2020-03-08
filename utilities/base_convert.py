@@ -101,7 +101,7 @@ class BaseConvert:
             return False
         return True
 
-    def as_json(self):
+    def to_json(self):
         return self.output
     
     def decompose(self):
