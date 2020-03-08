@@ -63,6 +63,9 @@ coverage.xml
 *.cover 
 .hypothesis/ 
 
+#general test data
+*.csv
+
 # Jupyter Notebook 
 .ipynb_checkpoints 
 
