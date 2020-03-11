@@ -2,11 +2,13 @@
 
 import sys, getopt
 from pathlib import Path
-from lbg_convert import LBGConvert
+from lbg_convert import LBGConvert, OrderGenerator
 
 SELECTOR = {
     "LBG": LBGConvert
 }
+
+BULK_RECORDS_PER_CALL = 2
 
 def print_help_and_exit():
     print ('import_file.py -f <format> -i <inputfile>')
@@ -36,7 +38,7 @@ def test_parameters(argv):
             fileformat = arg
         elif opt in ("-i", "--inputfile"):
             inputfile = arg
-    
+
     if not inputfile:
         print("Error: Missing input file")
         print("-h for help")
@@ -63,15 +65,38 @@ def main(argv):
 
     # open file
     plfile = Path(inputfile)
+
+    order = 0
+    current_date = None
     if plfile.exists():
         with plfile.open(mode='r') as f:
             l = f.readline()
             while(l != ""):
                 line_convertor = SELECTOR[fileformat.upper()](l)
+
                 if line_convertor.decompose():
-                    print(line_convertor.to_json())
-#                else:
-#                    print("Error in line!\n")
+
+                    if line_convertor.__class__.order_handling == OrderGenerator.FileOrderGeneration:
+                        if current_date != line_convertor.output["date"]:
+                            current_date = line_convertor.output["date"]
+                            order = 0
+                        line_convertor.output["order"] = str(order)
+                        order = order + 1
+
+                    if line_convertor.__class__.order_handling == OrderGenerator.ReverseFileOrderGeneration:
+                        if current_date != line_convertor.output["date"]:
+                            current_date = line_convertor.output["date"]
+                            order = 0
+                        line_convertor.output["order"] = str(order)
+                        order = order - 1
+
+                    if line_convertor.validate():
+                        print(line_convertor.to_json())
+                    else:
+                        print("Validation Error in:", line_convertor.to_json())
+                else:
+                    print("Decompose error in: ",str(l))
+
                 l = f.readline()
     else:
         print("Error: File", inputfile, "does not exist.")

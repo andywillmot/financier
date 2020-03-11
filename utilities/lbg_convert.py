@@ -1,9 +1,8 @@
-from base_convert import BaseConvert
+from base_convert import BaseConvert, OrderGenerator
 from datetime import datetime
 
 class LBGConvert(BaseConvert):
-    order_inc = 1000
-    current_date = ""
+    order_handling = OrderGenerator.ReverseFileOrderGeneration
 
     def decompose(self):
         fields = self.inputline.split(",")
@@ -40,24 +39,16 @@ class LBGConvert(BaseConvert):
             return False
         
         #convert value
+
         if fields[5] != "":
-            self.output["value"] = "-" + fields[5]
-        else:
-            self.output["value"] = fields[6]
+            value = "-0" + fields[5] if fields[5][0] == "." else "-" + fields[5]
+        else:    
+            value = "0" + fields[6] if fields[6][0] == "." else fields[6]
+
+        self.output["value"] = value
+        
         if not self.isvalid_value():
             return False
-
-        #check if i need to decrement the order
-        if LBGConvert.current_date != self.output["date"]:
-            LBGConvert.current_date = self.output["date"]
-            LBGConvert.order_inc = 1000
-        else:
-            LBGConvert.order_inc = LBGConvert.order_inc - 1
-
-        #insert order
-        self.output["order"] = str(LBGConvert.order_inc)
-
-        self.validate()
         
         return True
 

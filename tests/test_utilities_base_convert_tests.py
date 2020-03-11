@@ -30,7 +30,7 @@ class Test_TestOrderValidation(unittest.TestCase):
     
     def test_greaterorqualtozero(self):
         self.obj.output["order"] = "-3"
-        self.assertFalse(self.obj.isvalid_order())
+        self.assertTrue(self.obj.isvalid_order())
     
     def test_isvalid(self):
         self.obj.output["order"] = "5"

@@ -1,8 +1,17 @@
 import datetime
 import json
 import re
+import enum
+
+class OrderGenerator(enum.Enum):
+    NoGeneration = 0
+    FileOrderGeneration = 1
+    ReverseFileOrderGeneration = 2
 
 class BaseConvert:
+
+    order_handling = OrderGenerator.NoGeneration
+
     def __init__(self, inputline):
         self.inputline = inputline
 
@@ -47,9 +56,6 @@ class BaseConvert:
             print("Error-format: Cannot convert Order to integer")
             return False
 
-        if int(self.output["order"]) < 0:
-            print("Error-format: Order is not positive")
-            return False
         return True
 
     def isvalid_account(self):
