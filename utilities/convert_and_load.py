@@ -3,7 +3,7 @@
 import sys, getopt
 import requests
 from pathlib import Path
-from lbg_convert import LBGConvert, OrderGenerator
+from utilities.lbg_convert import LBGConvert, OrderGenerator
 import json
 
 SELECTOR = {

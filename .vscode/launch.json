@@ -5,16 +5,57 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Import test run",
+            "name": "Python: Convert & Load test.csv --dryrun",
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "args": ["-fLBG", 
-                    "-i${fileDirname}\\test.csv", 
-                    "-olocalhost:8000", 
-                    "-t0d09a31b97b45daa0cdc604bbbaad99f66ea8180",
-/*                    "-d", */
-                ],
+            "args": [
+                "-fLBG",
+                "-i${fileDirname}\\test.csv",
+                "-olocalhost:8000",
+                "-t0d09a31b97b45daa0cdc604bbbaad99f66ea8180",
+                "-d",
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Convert & Load test.csv file",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "args": [
+                "-fLBG",
+                "-i${fileDirname}\\test.csv",
+                "-olocalhost:8000",
+                "-t0d09a31b97b45daa0cdc604bbbaad99f66ea8180",
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Convert & Load test2.csv --dryrun",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "args": [
+                "-fLBG",
+                "-i${fileDirname}\\test2.csv",
+                "-olocalhost:8000",
+                "-t0d09a31b97b45daa0cdc604bbbaad99f66ea8180",
+                "-d",
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Convert & Load test2.csv file",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "args": [
+                "-fLBG",
+                "-i${fileDirname}\\test2.csv",
+                "-olocalhost:8000",
+                "-t0d09a31b97b45daa0cdc604bbbaad99f66ea8180",
+            ],
             "console": "integratedTerminal"
         }
     ]

@@ -23,10 +23,10 @@ class Transaction(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['account', 'date', 'order']),
+            models.Index(fields=['account', 'date', 'title', 'ttype', 'value']),
             models.Index(fields=['subcategory']),
         ]
-        unique_together = [['account', 'date', 'order']]
+        unique_together = [['account', 'date', 'title', 'ttype', 'value']]
 
 
 
