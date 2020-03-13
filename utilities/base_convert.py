@@ -22,16 +22,13 @@ class BaseConvert:
             "account": "",
             "title": "",
             "value": "",
-            "validated": "False",
         }
 
     def validate(self):
         if  (self.isvalid_date() and self.isvalid_order() and self.isvalid_ttype() \
             and self.isvalid_account() and self.isvalid_title() and self.isvalid_value()):
-            self.output["validated"] = True
             return True
         else:
-            self.output["validated"] = False
             return False
         
     def isvalid_date(self):

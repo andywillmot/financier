@@ -9,7 +9,12 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "args": ["-fLBG", "-i${fileDirname}\\test.csv"],
+            "args": ["-fLBG", 
+                    "-i${fileDirname}\\test.csv", 
+                    "-olocalhost:8000", 
+                    "-t0d09a31b97b45daa0cdc604bbbaad99f66ea8180",
+/*                    "-d", */
+                ],
             "console": "integratedTerminal"
         }
     ]
