@@ -40,7 +40,7 @@ class SubCategoryViewSet(viewsets.ModelViewSet):
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta(object):
         model = Transaction
-        fields = ['account', 'date', 'order', 'title', 'ttype', 'value', 'subcategory', 'importsource']
+        fields = ['account', 'date', 'order', 'count', 'title', 'ttype', 'value', 'subcategory', 'importsource']
         read_only_fields = ['subcategory', 'importsource']
 
 # ViewSets define the view behavior.
