@@ -65,6 +65,7 @@ coverage.xml
 
 #general test data
 *.csv
+*.tmp
 
 # Jupyter Notebook 
 .ipynb_checkpoints 
