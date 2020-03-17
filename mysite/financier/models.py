@@ -12,6 +12,7 @@ class Transaction(models.Model):
     account = models.CharField(max_length=30)
     date = models.DateField()
     order = models.IntegerField()
+    count = models.IntegerField()
     day = models.IntegerField(null=True, blank=True, db_index=True)
     week = models.IntegerField(null=True, blank=True, db_index=True)
     month = models.IntegerField(null=True, blank=True, db_index=True)
@@ -23,10 +24,10 @@ class Transaction(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['account', 'date', 'title', 'ttype', 'value']),
+            models.Index(fields=['account', 'date', 'title', 'ttype', 'value', 'count']),
             models.Index(fields=['subcategory']),
         ]
-        unique_together = [['account', 'date', 'title', 'ttype', 'value']]
+        unique_together = [['account', 'date', 'title', 'ttype', 'value', 'count']]
 
 
 
