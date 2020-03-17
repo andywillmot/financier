@@ -1,15 +1,19 @@
-from base_convert import BaseConvert, OrderGenerator
+from base_convert import *
 from datetime import datetime
+from pathlib import Path
+import csv
 
-class LBGConvert(BaseConvert):
+
+
+class LBGRecordConvert(BaseRecordConvert):
     order_handling = OrderGenerator.ReverseFileOrderGeneration
 
     def decompose(self):
         fields = self.inputline.split(",")
 
         #check size
-        if len(fields) != 8:
-            print("Incorrect number of fields, should be 8")
+        if len(fields) != 10:
+            print("Incorrect number of fields, should be 10")
             return False
 
         #convert date
@@ -50,7 +54,69 @@ class LBGConvert(BaseConvert):
         if not self.isvalid_value():
             return False
         
+        #convert order
+        self.output["order"] = str(int(fields[8]))
+        if not self.isvalid_order():
+            return False
+
+        #convert count
+        self.output["count"] = str(int(fields[9]))
+        if not self.isvalid_count():
+            return False
+
         return True
+
+
+class LBGFileConvert(BaseFileConvert):
+    records_per_call = 100
+    has_header = True
+    record_convert_class = LBGRecordConvert
+
+    def pre_convert_file(self):
+
+        outputfilepath = self.inputfilepath.with_name(
+                        self.inputfilepath.name + ".tmp"
+        )
+        
+        outputfilepath.touch()
+        
+        with self.inputfilepath.open(mode='r') as infile, \
+             outputfilepath.open(mode='w', newline = '') as outfile:
+
+            index = {}
+            order = 0
+            current_date = ""
+            csvin = csv.DictReader(infile)
+            fieldnames = csvin.fieldnames
+            fieldnames.append("Order")
+            fieldnames.append("Count")
+            csvout = csv.DictWriter(outfile, fieldnames=fieldnames)
+            csvout.writeheader()
+            for row in csvin:
+                if (current_date != row['Transaction Date']):
+                    index = {}
+                    current_date = row['Transaction Date']
+                    order = 0
+                else:
+                    order = order - 1
+
+                key = row['Transaction Type'] + \
+                    row['Account Number'] + row['Transaction Description'] + \
+                    row['Debit Amount'] + row['Credit Amount']
+                if key in index:
+                    index[key] = index[key] + 1
+                else:
+                    index[key] = 0
+                count = index[key]
+                row['Count']=index[key]
+                row['Order']=order
+                csvout.writerow(row)
+
+        self.inputfilepath = outputfilepath
+        return True
+        
+
+
 
 
         

@@ -2,13 +2,15 @@ import datetime
 import json
 import re
 import enum
+from pathlib import Path
+import requests
 
 class OrderGenerator(enum.Enum):
     NoGeneration = 0
     FileOrderGeneration = 1
     ReverseFileOrderGeneration = 2
 
-class BaseConvert:
+class BaseRecordConvert:
 
     order_handling = OrderGenerator.NoGeneration
 
@@ -18,6 +20,7 @@ class BaseConvert:
         self.output  = {
             "date": "",
             "order": "",
+            "count": "",
             "ttype": "",
             "account": "",
             "title": "",
@@ -45,6 +48,19 @@ class BaseConvert:
     def isvalid_order(self):
         if self.output["order"] == "": 
             print("Error-format: Order is blank")
+            return False
+
+        try:
+            val = int(self.output["order"])
+        except:
+            print("Error-format: Cannot convert Order to integer")
+            return False
+
+        return True
+
+    def isvalid_count(self):
+        if self.output["order"] == "": 
+            print("Error-format: Count is blank")
             return False
 
         try:
@@ -110,4 +126,78 @@ class BaseConvert:
     def decompose(self):
         pass
 
+    def pre_convert(self, inputfile):
+        return inputfile
 
+
+
+class BaseFileConvert:
+    records_per_call = 1
+    has_header = False
+    record_convert_class = BaseRecordConvert
+
+    def __init__(self, inputfilepath: Path):
+        self.inputfilepath = inputfilepath
+        self.formatter_class = self.__class__.record_convert_class
+    
+    def file_exists(self):
+        return self.inputfilepath.exists()
+    
+    def pre_convert_file(self):
+        return True
+
+    def load_file_records(self, requesturl, headers, dryrun=False):
+
+        bulk_load_data = []
+        bulk_counter = 0
+        recs_per_call = self.__class__.records_per_call
+        has_header = self.__class__.has_header
+        line_errors = 0
+
+        with self.inputfilepath.open(mode='r') as file:
+            line = file.readline()
+            if has_header: 
+                line = file.readline()
+            while (line != ""):
+                
+                line_convertor = self.formatter_class(line)
+                nextline = file.readline() #read next line early to know to process bulks
+
+                if line_convertor.decompose():
+                    if line_convertor.validate():
+                        if recs_per_call > 1:
+                            bulk_load_data.append(line_convertor.to_json())
+                            if len(bulk_load_data) >= recs_per_call or nextline == "":
+                                print("Sending bulk load of (max)", recs_per_call, "records...")
+                                print(json.dumps(bulk_load_data))
+                                if (not dryrun):
+                                    response = requests.post(url = requesturl, headers = headers, \
+                                                            data = json.dumps(bulk_load_data))
+                                    if response.status_code != 201:
+                                        print(response.status_code, response.text)
+                                        return False
+                                bulk_load_data.clear()
+                        else:
+                            data = line_convertor.to_json()
+                            print("Sending:", json.dumps(data))
+                            if (not dryrun):
+                                response = requests.post(url = requesturl, headers = headers, \
+                                                        data = json.dumps(data))
+                                if response.status_code != 201:
+                                    print(response.status_code, response.text)
+                    else:
+                        print("Validation Error in:", line_convertor.to_json())
+                        line_errors = line_errors + 1
+
+                else:
+                    print("Decompose error in: ",str(line))
+                    line_errors = line_errors + 1
+
+                line = nextline
+        
+        if line_errors > 0:
+            print("There ", "was" if line_errors == 1 else "where", line_errors, \
+                "validation", "error" if line_errors== 1 else "errors", "in total")
+            return False
+        else:
+            return True    

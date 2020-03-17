@@ -3,14 +3,15 @@
 import sys, getopt
 import requests
 from pathlib import Path
-from utilities.lbg_convert import LBGConvert, OrderGenerator
+from base_convert import OrderGenerator
+from lbg_convert import LBGFileConvert, LBGRecordConvert
 import json
 
 SELECTOR = {
-    "LBG": LBGConvert
+    "LBG": LBGFileConvert,
 }
 
-BULK_RECORDS_PER_CALL = 50
+
 ENDPOINT = "/transactions/"
 AUTH_TOKEN =  "0d09a31b97b45daa0cdc604bbbaad99f66ea8180"
 
@@ -62,6 +63,11 @@ def test_parameters(argv):
         print("-h for help")
         sys.exit(1)
 
+    if fileformat not in SELECTOR:
+        print("Conversion type", fileformat,"not found")
+        print("-h for help")
+        sys.exit(1)
+
     if not host:
         print("Error: Missing host")
         print("-h for help")
@@ -72,81 +78,37 @@ def test_parameters(argv):
         print("-h for help")
         sys.exit(1)
 
-#    print ('Input file is ', inputfile)
-#    print ('Format is ', fileformat)
     return fileformat, inputfile, host, authtoken, dryrun
 
 
 def main(argv):
+    
+    #verify parameters
     fileformat, inputfile, host, authtoken, dryrun = test_parameters(argv)
 
-    #validate format
-    if fileformat not in SELECTOR:
-        print("Conversion type", fileformat,"not found")
-        exit(1)
-
-    bulk_load_data = []
-    bulk_counter = 0
-
+    #setup http request and headers
     requesturl = "http://" + host + ENDPOINT
     headers = {
         "Content-Type": "application/json",
         "Authorization": "Token " + authtoken
     } 
 
-    # open file
-    plfile = Path(inputfile)
+    # setup converter object instances
+    fileconverter = SELECTOR[fileformat.upper()](Path(inputfile))
+    
+#    order = 0
+#    current_date = None
 
-    order = 0
-    current_date = None
-    if plfile.exists():
-        with plfile.open(mode='r') as f:
-            l = f.readline()
-            while(l != ""):
-                line_convertor = SELECTOR[fileformat.upper()](l)
-                l = f.readline() #read next line early to know to process bulks
+    if fileconverter.file_exists():
+        # get pre-converted file - allows stuff to be done to file before loading
+        if fileconverter.pre_convert_file():
 
-                if line_convertor.decompose():
-
-                    if line_convertor.__class__.order_handling == OrderGenerator.FileOrderGeneration:
-                        if current_date != line_convertor.output["date"]:
-                            current_date = line_convertor.output["date"]
-                            order = 0
-                        line_convertor.output["order"] = str(order)
-                        order = order + 1
-
-                    if line_convertor.__class__.order_handling == OrderGenerator.ReverseFileOrderGeneration:
-                        if current_date != line_convertor.output["date"]:
-                            current_date = line_convertor.output["date"]
-                            order = 0
-                        line_convertor.output["order"] = str(order)
-                        order = order - 1
-
-                    if line_convertor.validate():
-                        if BULK_RECORDS_PER_CALL > 1:
-                            bulk_load_data.append(line_convertor.to_json())
-                            if len(bulk_load_data) >= BULK_RECORDS_PER_CALL or l == "":
-                                print("Sending bulk load of", BULK_RECORDS_PER_CALL, "records...")
-                                print(json.dumps(bulk_load_data))
-                                if (not dryrun):
-                                    response = requests.post(url = requesturl, headers = headers, \
-                                                            data = json.dumps(bulk_load_data))
-                                    if response.status_code != 201:
-                                        print(response.status_code, response.text)
-                                bulk_load_data.clear()
-                        else:
-                            data = line_convertor.to_json()
-                            print("Sending:", json.dumps(data))
-                            if (not dryrun):
-                                response = requests.post(url = requesturl, headers = headers, \
-                                                        data = json.dumps(data))
-                                if response.status_code != 201:
-                                    print(response.status_code, response.text)
-                            
-                    else:
-                        print("Validation Error in:", line_convertor.to_json())
-                else:
-                    print("Decompose error in: ",str(l))
+            if fileconverter.load_file_records(requesturl, headers, dryrun):
+                print("Success. Your records should have been loaded")
+            else:
+                print("Error: Loading records")
+        else:
+            print("Error: Pre-converting file")
     else:
         print("Error: File", inputfile, "does not exist.")
 
