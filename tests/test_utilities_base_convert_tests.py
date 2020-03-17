@@ -1,10 +1,10 @@
-from utilities.base_convert import BaseConvert
+from utilities.base_convert import BaseRecordConvert
 import unittest
 
 
 class Test_TestDateValidation(unittest.TestCase):
     def setUp(self):
-        self.obj = BaseConvert("")
+        self.obj = BaseRecordConvert("")
 
     def test_blank(self):
         self.assertFalse(self.obj.isvalid_date())
@@ -19,7 +19,7 @@ class Test_TestDateValidation(unittest.TestCase):
     
 class Test_TestOrderValidation(unittest.TestCase):
     def setUp(self):
-        self.obj = BaseConvert("")
+        self.obj = BaseRecordConvert("")
 
     def test_blank(self):
         self.assertFalse(self.obj.isvalid_order())
@@ -38,7 +38,7 @@ class Test_TestOrderValidation(unittest.TestCase):
 
 class Test_TestAccountValidation(unittest.TestCase):
     def setUp(self):
-        self.obj = BaseConvert("")
+        self.obj = BaseRecordConvert("")
 
     def test_isblankfail(self):
         self.assertFalse(self.obj.isvalid_account())
@@ -57,7 +57,7 @@ class Test_TestAccountValidation(unittest.TestCase):
 
 class Test_TestValueValidation(unittest.TestCase):
     def setUp(self):
-        self.obj = BaseConvert("")
+        self.obj = BaseRecordConvert("")
 
     def test_blank(self):
         self.assertFalse(self.obj.isvalid_value())
@@ -101,7 +101,7 @@ class Test_TestValueValidation(unittest.TestCase):
 
 class Test_TestTTypeValidation(unittest.TestCase):
     def setUp(self):
-        self.obj = BaseConvert("")
+        self.obj = BaseRecordConvert("")
 
     def test_blankok(self):
         self.assertTrue(self.obj.isvalid_ttype())
@@ -120,7 +120,7 @@ class Test_TestTTypeValidation(unittest.TestCase):
 
 class Test_TestTitleValidation(unittest.TestCase):
     def setUp(self):
-        self.obj = BaseConvert("")
+        self.obj = BaseRecordConvert("")
 
     def test_blank(self):
         self.assertFalse(self.obj.isvalid_title())
@@ -147,5 +147,3 @@ class Test_TestTitleValidation(unittest.TestCase):
 
 
 
-if __name__ == '__main__':
-    unittest.main()
