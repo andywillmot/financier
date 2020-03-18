@@ -13,7 +13,6 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-import pdb
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
@@ -32,6 +31,7 @@ class SubCategorySerializer(serializers.HyperlinkedModelSerializer):
         model = SubCategory
         fields = ['name']
 
+
 class SubCategoryViewSet(viewsets.ModelViewSet):
     queryset = SubCategory.objects.all()
     serializer_class = SubCategorySerializer
@@ -43,7 +43,7 @@ class TransactionSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['account', 'date', 'order', 'count', 'title', 'ttype', 'value', 'subcategory', 'importsource']
         read_only_fields = ['subcategory', 'importsource']
 
-# ViewSets define the view behavior.
+
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
@@ -56,14 +56,13 @@ class TransactionViewSet(viewsets.ModelViewSet):
                 serializer = self.get_serializer(data=row)
                 serializer.is_valid(raise_exception=True)
                 serial_list.append(serializer)
-            
+
             for validated_serializer in serial_list:
                 self.perform_create(validated_serializer)
-        
+
             return Response("{Response: Multiple rows created}", status=status.HTTP_201_CREATED, headers="")
         else:
-            super(TransactionViewSet,self).create(request,*args, **kwargs)
-    
+            super(TransactionViewSet, self).create(request, *args, **kwargs)
 
     def perform_create(self, serializers):
         subcategory = None
@@ -73,7 +72,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
                                        serializers.validated_data['ttype'])
         serializers.save(subcategory=subcategory)
 
-# Routers provide an easy way of automatically determining the URL conf.
+
 router = routers.DefaultRouter()
 router.register(r'transactions', TransactionViewSet)
 router.register(r'subcategorys', SubCategoryViewSet)

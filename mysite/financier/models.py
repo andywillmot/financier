@@ -3,9 +3,10 @@ from django.db import models
 
 class ImportSource(models.Model):
     name = models.CharField(max_length=100)
-    
+
     def __str__(self):
         return self.name
+
 
 class Transaction(models.Model):
     importsource = models.ForeignKey(ImportSource, models.SET_NULL, null=True, blank=True)
@@ -28,7 +29,6 @@ class Transaction(models.Model):
             models.Index(fields=['subcategory']),
         ]
         unique_together = [['account', 'date', 'title', 'ttype', 'value', 'count']]
-
 
 
 class Category(models.Model):

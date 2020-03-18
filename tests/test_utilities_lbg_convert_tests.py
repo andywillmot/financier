@@ -11,7 +11,7 @@ class Test_TestPreConvert(unittest.TestCase):
 
     def test_existstest(self):
         self.assertTrue(self.obj.file_exists())
-
+        
     def test_filenotsame(self):
         infile = self.obj.inputfilepath
         self.obj.pre_convert_file()
