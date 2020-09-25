@@ -30,7 +30,6 @@ class SubCategoryResource(resources.ModelResource):
     class Meta:
         model = models.SubCategory
 
-
 # Register your models here.
 class TransactionAdmin(ImportExportModelAdmin):
     resource_class = TransactionResource
@@ -102,6 +101,11 @@ class TitleToSubCategoryMapAdmin(ImportExportModelAdmin):
     )
 
 
+class StockAdmin(admin.ModelAdmin):
+    pass
+
+
+
 def _register(model, admin_class):
     admin.site.register(model, admin_class)
 
@@ -116,3 +120,6 @@ _register(models.SubCategory, SubCategoryAdmin)
 
 
 _register(models.TitleToSubCategoryMap, TitleToSubCategoryMapAdmin)
+
+
+_register(models.Stock,StockAdmin)

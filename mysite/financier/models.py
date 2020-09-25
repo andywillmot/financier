@@ -58,3 +58,13 @@ class TitleToSubCategoryMap(models.Model):
 
     def __str__(self):
         return '(' + self.title_search_expression + ')'
+
+class Stock(models.Model):
+    symbol = models.CharField(max_length=30)
+    company_overview = models.JSONField(default=default_value())
+   
+    def __str__(self):
+        return self.company_overview.Name + ' (' + self.company_overview.Symbol + ')'
+    
+    def default_value():
+        return {'Name':'none', 'Symbol': 'none' }
