@@ -16,11 +16,11 @@ COPY ./requirements.txt /usr/src/mysite/requirements.txt
 RUN pip install -r ./requirements.txt
 
 # copy entrypoint.sh
-COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
-RUN chmod +x /usr/src/app/entrypoint.sh
+COPY ./entrypoint.sh /usr/src/mysite/entrypoint.sh
+RUN chmod +x /usr/src/mysite/entrypoint.sh
 
 # copy project
 COPY . /usr/src/mysite/
 
 # run entrypoint.sh
-ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
+ENTRYPOINT ["/usr/src/mysite/entrypoint.sh"]
