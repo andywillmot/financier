@@ -49,7 +49,6 @@ class BaseRecordConvert:
         if self.output["order"] == "": 
             print("Error-format: Order is blank")
             return False
-
         try:
             val = int(self.output["order"])
         except:

@@ -68,15 +68,15 @@ class TransactionAdmin(ImportExportModelAdmin):
 class CategoryAdmin(ImportExportModelAdmin):
     resource_class = CategoryResource
     list_display = ('id', 'name', 'description')
-    list_filter = ('id', 'name', 'description')
+    list_filter = ('id', 'name')
     search_fields = ('name',)
 
 
 class SubCategoryAdmin(ImportExportModelAdmin):
     resource_class = SubCategoryResource
-    list_display = ('id', 'name', 'description', 'category')
-    list_filter = ('category', 'id', 'name', 'description', 'category')
-    search_fields = ('name',)
+    list_display = ('id', 'name', 'category', 'include_in_budget')
+    list_filter = ('category', 'include_in_budget')
+    search_fields = ('name','category__name')
 
 
 class TitleToSubCategoryMapAdmin(ImportExportModelAdmin):

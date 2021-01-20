@@ -43,6 +43,7 @@ class SubCategory(models.Model):
     name = models.CharField(max_length=40)
     description = models.CharField(max_length=100, null=True, blank=True)
     category = models.ForeignKey('Category', models.SET_NULL, blank=True, null=True)
+    include_in_budget = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
