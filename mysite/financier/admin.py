@@ -48,17 +48,10 @@ class TransactionAdmin(ImportExportModelAdmin):
         'ttype',
         'value',
     )
+    ordering = ['date','order']
     list_filter = (
         'date',
-        'id',
         'account',
-        'date',
-        'order',
-        'day',
-        'week',
-        'month',
-        'year',
-        'title',
         'subcategory',
         'ttype',
         'value',
