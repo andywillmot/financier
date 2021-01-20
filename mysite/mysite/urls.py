@@ -51,21 +51,30 @@ class TransactionViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
 
         if isinstance(request.data, list):
+            invalid_rows = 0
             serial_list = []
             for row in request.data:
+
                 serializer = self.get_serializer(data=row)
-                serializer.is_valid(raise_exception=True)
-                serial_list.append(serializer)
+                if serializer.is_valid(raise_exception=False):
+                    serial_list.append(serializer)
+                else:
+                    invalid_rows = invalid_rows + 1
 
             for validated_serializer in serial_list:
                 self.perform_create(validated_serializer)
 
-            return Response("{Response: Multiple rows created}", status=status.HTTP_201_CREATED, headers="")
+            return Response("{Response: Multiple rows created. " + str(invalid_rows) + " invalid rows}", status=status.HTTP_201_CREATED, headers="")
         else:
             super(TransactionViewSet, self).create(request, *args, **kwargs)
 
     def perform_create(self, serializers):
         subcategory = None
+        if serializers.validated_data.get('title') is None:
+            print("missing title?")
+            print(serializers.validated_data)
+            exit(1)
+
         if self.request:
             subcategory = map_category(serializers.validated_data['title'],
                                        serializers.validated_data['value'],
