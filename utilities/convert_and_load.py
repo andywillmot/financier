@@ -16,7 +16,7 @@ ENDPOINT = "/transactions/"
 AUTH_TOKEN =  "0d09a31b97b45daa0cdc604bbbaad99f66ea8180"
 
 def print_help_and_exit():
-    print ('import_file.py -f <format> -i <inputfile>')
+    print ('import_file.py -f <format> -i <inputfile> -t <token> -o <host> [-d]')
     print ('List of available formats:')
     print ('Lloyds Bank Export     -f LBG')
     print ('AMEX Export            -f AMEX')
