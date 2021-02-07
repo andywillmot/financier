@@ -92,13 +92,13 @@ class LBGFileConvert(BaseFileConvert):
             fieldnames.append("Count")
             csvout = csv.DictWriter(outfile, fieldnames=fieldnames)
             csvout.writeheader()
-            for row in csvin:
+            for row in reversed(list(csvin)):
                 if (current_date != row['Transaction Date']):
                     index = {}
                     current_date = row['Transaction Date']
                     order = 0
                 else:
-                    order = order - 1
+                    order = order + 1
 
                 key = row['Transaction Type'] + \
                     row['Account Number'] + row['Transaction Description'] + \

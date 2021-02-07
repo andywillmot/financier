@@ -17,70 +17,8 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
 
-from financier.models import Transaction, SubCategory
-from rest_framework import routers, serializers, viewsets, status
-from rest_framework.response import Response
-from financier.utilities import map_category
-
-
-# Serializers define the API representation.
-
-
-class SubCategorySerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = SubCategory
-        fields = ['name']
-
-
-class SubCategoryViewSet(viewsets.ModelViewSet):
-    queryset = SubCategory.objects.all()
-    serializer_class = SubCategorySerializer
-
-
-class TransactionSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta(object):
-        model = Transaction
-        fields = ['account', 'date', 'order', 'count', 'title', 'ttype', 'value', 'subcategory', 'importsource']
-        read_only_fields = ['subcategory', 'importsource']
-
-
-class TransactionViewSet(viewsets.ModelViewSet):
-    queryset = Transaction.objects.all()
-    serializer_class = TransactionSerializer
-
-    def create(self, request, *args, **kwargs):
-
-        if isinstance(request.data, list):
-            invalid_rows = 0
-            serial_list = []
-            for row in request.data:
-
-                serializer = self.get_serializer(data=row)
-                if serializer.is_valid(raise_exception=False):
-                    serial_list.append(serializer)
-                else:
-                    invalid_rows = invalid_rows + 1
-
-            for validated_serializer in serial_list:
-                self.perform_create(validated_serializer)
-
-            return Response("{Response: Multiple rows created. " + str(invalid_rows) + " invalid rows}", status=status.HTTP_201_CREATED, headers="")
-        else:
-            super(TransactionViewSet, self).create(request, *args, **kwargs)
-
-    def perform_create(self, serializers):
-        subcategory = None
-        if serializers.validated_data.get('title') is None:
-            print("missing title?")
-            print(serializers.validated_data)
-            exit(1)
-
-        if self.request:
-            subcategory = map_category(serializers.validated_data['title'],
-                                       serializers.validated_data['value'],
-                                       serializers.validated_data['ttype'])
-        serializers.save(subcategory=subcategory)
-
+from rest_framework import routers 
+from financier.views import TransactionViewSet, SubCategoryViewSet
 
 router = routers.DefaultRouter()
 router.register(r'transactions', TransactionViewSet)
