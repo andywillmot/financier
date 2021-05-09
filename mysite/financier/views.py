@@ -1,7 +1,10 @@
 from django.shortcuts import render
-
+from django_filters import FilterSet
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework import routers, serializers, viewsets, status
+from rest_framework_json_api import serializers
+from rest_framework_json_api.relations import HyperlinkedRelatedField
+from rest_framework_json_api import filters
+from rest_framework import routers, viewsets, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -15,31 +18,42 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Serializers
-class SubCategorySerializer(serializers.HyperlinkedModelSerializer):
+class SubCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = SubCategory
-        fields = ['name']
+        fields = ('id', 'name', 'description', 'include_in_budget')
+
+
+class SubCategoryFilter(FilterSet):
+    class Meta:
+        model = SubCategory
+        fields = {
+                'id': ['exact','in'],
+        }
 
 
 class SubCategoryViewSet(viewsets.ModelViewSet):
     queryset = SubCategory.objects.all()
     serializer_class = SubCategorySerializer
+    filterset_class = SubCategoryFilter
 
 
-class TransactionSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta(object):
+class TransactionSerializer(serializers.ModelSerializer):
+    class Meta:
         model = Transaction
-        fields = ['account', 'date', 'order', 'count', 'title', 'ttype', 'value', 'subcategory', 'importsource']
-        read_only_fields = ['subcategory', 'importsource']
-
+        fields = ('account', 'date', 'order', 'count', 'title', 'ttype', 'subcategory_id', 'value')
 
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
 
-    @requires_auth
+#    @requires_auth
     def list(self, request, *args, **kwargs):
-        return(super().list(request))
+        
+        data = super().list(request)
+        meta_data = data.data.pop('meta')
+        data.data['meta'] = {'total': meta_data['pagination']['count']}
+        return(data)
 
 
     def create(self, request, *args, **kwargs):
