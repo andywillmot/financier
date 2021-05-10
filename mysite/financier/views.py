@@ -29,6 +29,7 @@ class SubCategoryFilter(FilterSet):
         model = SubCategory
         fields = {
                 'id': ['exact','in'],
+                'name': ['icontains']
         }
 
 
